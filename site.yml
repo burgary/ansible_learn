@@ -1,0 +1,86 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: install updates (AlmaLinux)
+    dnf:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "AlmaLinux"
+
+  - name: install updates (Debian/Ubuntu)
+    apt:
+      upgrade: dist
+      update_cache: yes
+    when: ansible_distribution in ["Ubuntu", "Debian"]
+    changed_when: false
+
+  - name: install updates (AlpineLinux)
+    apk:
+      upgrade: yes
+      update_cache: yes
+    when: ansible_distribution in "Alpine"
+
+
+- hosts: web_servers
+  become: true
+  tasks:
+
+  - name: install apache2 and php packages (Debian/Ubuntu)
+    apt:
+      name:
+        - apache2
+        - libapache2-mod-php
+      state: latest
+    when: ansible_distribution in ["Ubuntu", "Debian"]
+
+  - name: install apache and php packages (AlmaLinux)
+    dnf:
+      name:
+        - httpd
+        - php
+      state: latest
+    when: ansible_distribution == "AlmaLinux"
+
+  - name: install apache and php packages (Alpine Linux)
+    apk:
+      name:
+        - apache2
+        - php
+      state: latest
+    when: ansible_distribution == "Alpine"
+
+
+- hosts: db_servers
+  become: true
+  tasks:
+
+  - name: install mariadb packages (Debian/Ubuntu)
+    apt:
+      name: mariadb-server
+      state: latest
+    when: ansible_distribution in ["Ubuntu", "Debian"]
+
+  - name: install mariadb packages (Alma Linux)
+    dnf:
+      name: mariadb-server
+      state: latest
+    when: ansible_distribution == "AlmaLinux"
+
+  - name: install mariadb package (AlpineLinux)
+    apk:
+      name: mariadb
+      state: latest
+    when: ansible_distribution == "Alpine"
+
+
+- hosts: file_servers
+  become: true
+  tasks:
+
+  - name: install samba package
+    package:
+      name: samba
+      state: latest
