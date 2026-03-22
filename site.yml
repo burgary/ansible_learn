@@ -5,12 +5,14 @@
   pre_tasks:
 
   - name: install updates (AlmaLinux)
+    tags: always
     dnf:
       update_only: yes
       update_cache: yes
     when: ansible_distribution == "AlmaLinux"
 
   - name: install updates (Debian/Ubuntu)
+    tags: always
     apt:
       upgrade: dist
       update_cache: yes
@@ -18,6 +20,7 @@
     changed_when: false
 
   - name: install updates (AlpineLinux)
+    tags: always
     apk:
       upgrade: yes
       update_cache: yes
@@ -29,6 +32,7 @@
   tasks:
 
   - name: install apache2 and php packages (Debian/Ubuntu)
+    tags: apache,apache2,ubuntu,debian
     apt:
       name:
         - apache2
@@ -37,6 +41,7 @@
     when: ansible_distribution in ["Ubuntu", "Debian"]
 
   - name: install apache and php packages (AlmaLinux)
+    tags: apache,centos,almalinux,httpd
     dnf:
       name:
         - httpd
@@ -45,6 +50,7 @@
     when: ansible_distribution == "AlmaLinux"
 
   - name: install apache and php packages (Alpine Linux)
+    tags: apache,apache2,alpine
     apk:
       name:
         - apache2
@@ -58,18 +64,21 @@
   tasks:
 
   - name: install mariadb packages (Debian/Ubuntu)
+    tags: db,mariadb,ubuntu,debian
     apt:
       name: mariadb-server
       state: latest
     when: ansible_distribution in ["Ubuntu", "Debian"]
 
   - name: install mariadb packages (Alma Linux)
+    tags: centos,almalinux,db,mariadb
     dnf:
       name: mariadb-server
       state: latest
     when: ansible_distribution == "AlmaLinux"
 
   - name: install mariadb package (AlpineLinux)
+    tags: db,mariadb,alpine
     apk:
       name: mariadb
       state: latest
@@ -81,6 +90,7 @@
   tasks:
 
   - name: install samba package
+    tags: samba
     package:
       name: samba
       state: latest
